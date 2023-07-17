@@ -153,6 +153,7 @@ namespace MyApp1
 			global::Xamarin.Essentials.Resource.Id.text2 = global::MyApp1.Resource.Id.text2;
 			global::Xamarin.Essentials.Resource.Id.time = global::MyApp1.Resource.Id.time;
 			global::Xamarin.Essentials.Resource.Id.title = global::MyApp1.Resource.Id.title;
+			global::Xamarin.Essentials.Resource.Id.view_tree_lifecycle_owner = global::MyApp1.Resource.Id.view_tree_lifecycle_owner;
 			global::Xamarin.Essentials.Resource.Integer.status_bar_notification_info_maxnum = global::MyApp1.Resource.Integer.status_bar_notification_info_maxnum;
 			global::Xamarin.Essentials.Resource.Layout.browser_actions_context_menu_page = global::MyApp1.Resource.Layout.browser_actions_context_menu_page;
 			global::Xamarin.Essentials.Resource.Layout.browser_actions_context_menu_row = global::MyApp1.Resource.Layout.browser_actions_context_menu_row;
@@ -3561,28 +3562,28 @@ namespace MyApp1
 			public const int beginning = 2131230784;
 			
 			// aapt resource value: 0x7F080041
-			public const int blocking = 2131230785;
+			public const int big = 2131230785;
 			
 			// aapt resource value: 0x7F080042
-			public const int bottom = 2131230786;
+			public const int blocking = 2131230786;
 			
 			// aapt resource value: 0x7F080043
-			public const int browser_actions_header_text = 2131230787;
-			
-			// aapt resource value: 0x7F080046
-			public const int browser_actions_menu_items = 2131230790;
+			public const int bottom = 2131230787;
 			
 			// aapt resource value: 0x7F080044
-			public const int browser_actions_menu_item_icon = 2131230788;
-			
-			// aapt resource value: 0x7F080045
-			public const int browser_actions_menu_item_text = 2131230789;
+			public const int browser_actions_header_text = 2131230788;
 			
 			// aapt resource value: 0x7F080047
-			public const int browser_actions_menu_view = 2131230791;
+			public const int browser_actions_menu_items = 2131230791;
+			
+			// aapt resource value: 0x7F080045
+			public const int browser_actions_menu_item_icon = 2131230789;
+			
+			// aapt resource value: 0x7F080046
+			public const int browser_actions_menu_item_text = 2131230790;
 			
 			// aapt resource value: 0x7F080048
-			public const int button1 = 2131230792;
+			public const int browser_actions_menu_view = 2131230792;
 			
 			// aapt resource value: 0x7F080049
 			public const int buttonPanel = 2131230793;
@@ -4077,19 +4078,22 @@ namespace MyApp1
 			public const int view_offset_helper = 2131230951;
 			
 			// aapt resource value: 0x7F0800E8
-			public const int view_tree_saved_state_registry_owner = 2131230952;
+			public const int view_tree_lifecycle_owner = 2131230952;
 			
 			// aapt resource value: 0x7F0800E9
-			public const int visible = 2131230953;
+			public const int view_tree_saved_state_registry_owner = 2131230953;
 			
 			// aapt resource value: 0x7F0800EA
-			public const int visible_removing_fragment_view_tag = 2131230954;
+			public const int visible = 2131230954;
 			
 			// aapt resource value: 0x7F0800EB
-			public const int withText = 2131230955;
+			public const int visible_removing_fragment_view_tag = 2131230955;
 			
 			// aapt resource value: 0x7F0800EC
-			public const int wrap_content = 2131230956;
+			public const int withText = 2131230956;
+			
+			// aapt resource value: 0x7F0800ED
+			public const int wrap_content = 2131230957;
 			
 			static Id()
 			{
