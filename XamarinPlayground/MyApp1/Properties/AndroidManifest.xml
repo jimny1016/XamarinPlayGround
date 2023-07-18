@@ -8,4 +8,5 @@
 	</application>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.USB_PERMISSION" />
+	<uses-permission android:name="android.permission.MANAGE_USB" />
 </manifest>
