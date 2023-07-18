@@ -56,32 +56,25 @@ namespace MyApp1
         private void Button_Click(object sender, System.EventArgs e)
         {
             btn.Text = "Clicked";
-            //ShowAlertDialog("Button Clicked!");
-            ToggleUSBTransferMode();
+
+            var result = ToggleUSBTransferMode();
+            ShowAlertDialog(result.ToString());
+            
         }
 
-        public void ToggleUSBTransferMode()
+        public bool ToggleUSBTransferMode()
         {
-            var usbManager = (UsbManager)GetSystemService(Context.UsbService);
-            var usbFunctionRndis = "rndis";
-
             try
             {
                 // 取得 UsbManager 類別
-                var usbManagerClass = Java.Lang.Class.ForName("android.hardware.usb.UsbManager"); 
+                var usbManagerClass = Class.ForName("android.hardware.usb.UsbManager"); 
                 var methods = usbManagerClass.GetMethods();
-
-                //foreach (var method in methods)
-                //{
-                //    ShowAlertDialog(method.Name);
-                //}
-                // 取得 setUsbFunction 方法
-                //var setUsbFunctionMethod = usbManagerClass.GetMethod("setCurrentFunction", Java.Lang.Class.FromType(typeof(string)), Java.Lang.Class.FromType(typeof(Java.Lang.Object)));
-                //var setUsbFunctionMethod = usbManagerClass.GetMethod("setCurrentFunction", Class.ForName("java.lang.String"), Class.ForName("java.lang.Object"));
                 var setUsbFunctionMethod = methods.Where(m => m.Name == "setCurrentFunction").FirstOrDefault();
+
                 // 呼叫 setUsbFunction 方法開啟 USB 網路共享
-                setUsbFunctionMethod.Invoke(usbManager, usbFunctionRndis, true);
-                ShowAlertDialog("Good");
+                var usbManager = (UsbManager)GetSystemService(UsbService);
+                setUsbFunctionMethod.Invoke(usbManager, "rndis", true);
+                return true;
             }
             catch (ClassNotFoundException e)
             {
@@ -103,6 +96,7 @@ namespace MyApp1
                 ShowAlertDialog(JsonConvert.SerializeObject(e));
                 e.PrintStackTrace();
             }
+            return false;
         }
     }
 }
