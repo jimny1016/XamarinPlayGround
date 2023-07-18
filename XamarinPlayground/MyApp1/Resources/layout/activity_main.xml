@@ -16,4 +16,10 @@
         android:text="切換到Android控制模式"
         android:layout_marginTop="43.0dp"
         android:id="@+id/SwitchToAndroidControllMode"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="初始化SerialPort"
+        android:layout_marginTop="90.0dp"
+        android:id="@+id/InitSerialPort"/>
 </RelativeLayout>

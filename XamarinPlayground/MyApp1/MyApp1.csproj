@@ -124,6 +124,16 @@
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.7" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Plugins\SerialIO\SerialIO.csproj">
+      <Project>{1596972e-a910-40da-b3ed-b7a76124881c}</Project>
+      <Name>SerialIO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\SerialPort\SerialPort.csproj">
+      <Project>{dec64fa1-8d2f-453d-824d-186a4e341729}</Project>
+      <Name>SerialPort</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

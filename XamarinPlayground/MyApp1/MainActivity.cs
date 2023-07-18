@@ -11,12 +11,16 @@ using Java.Lang.Reflect;
 using Java.Lang;
 using Newtonsoft.Json;
 using Java.IO;
+using System.Reflection.Emit;
+using System.Threading;
+using Serial;
 
 namespace MyApp1
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        private SerialPort.SerialPortWrapper.SerialPort _libSerialPort;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -28,7 +32,10 @@ namespace MyApp1
             switchToRndisBtn.Click += SwitchToRndis_Click;
 
             var switchToAndroidControllModeBtn = FindViewById<Button>(Resource.Id.SwitchToAndroidControllMode);
-            switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;            
+            switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;
+
+            var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
+            initSerialPortBtn.Click += InitSerialPort_Click;
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -37,6 +44,7 @@ namespace MyApp1
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
         private void ShowAlertDialog(string message)
         {
             // 建立 AlertDialog.Builder
@@ -59,9 +67,15 @@ namespace MyApp1
         {
             ShowAlertDialog($"ToggleUSBTransferMode:{ToggleUSBTransferMode()}");
         }
+
         private void SwitchToAndroidControllMode_Click(object sender, EventArgs e)
         {
             ShowAlertDialog($"SwitchToControlMode:{SwitchToControlMode()}");
+        }
+
+        private void InitSerialPort_Click(object sender, EventArgs e)
+        {
+            ShowAlertDialog($"InitSerialPort_Click:{InitSerialPort()}");
         }
 
         public bool ToggleUSBTransferMode()
@@ -118,5 +132,30 @@ namespace MyApp1
             }
             return false;
         }
+
+        public bool InitSerialPort()
+        {
+            try
+            {
+                _libSerialPort = new SerialPort.SerialPortWrapper.SerialPort(
+                   "dev/ttyS2",
+                   460800,
+                   Stopbits.One,
+                   Parity.None,
+                   ByteSize.EightBits,
+                   Serial.FlowControl.Software,
+                   new Serial.Timeout(50, 50, 50, 50, 50));
+
+                return true;
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                ShowAlertDialog(JsonConvert.SerializeObject(ex));
+                ex.PrintStackTrace();
+            }
+            return false;
+        }
+
+        
     }
 }
