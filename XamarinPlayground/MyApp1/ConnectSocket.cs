@@ -13,12 +13,12 @@ namespace FileCatch
     {
         Socket _clientSocket;
         Socket _serverSocket;
-        Func<bool> _switchToControlMode;
+        Func<string, bool> _switchToControlMode;
         Func<bool> _initSerialPort;
-        public ConnectSocket(Func<bool> switchToControlMode, Func<bool> initSerialPort)
+        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort)
         {
             _switchToControlMode = switchToControlMode;
-            _switchToControlMode = initSerialPort;
+            _initSerialPort = initSerialPort;
 
             new Thread(new ThreadStart(Socket)) { IsBackground = true }.Start();
         }
@@ -49,10 +49,11 @@ namespace FileCatch
                         switch (command)
                         {
                             case "SwitchToAndroidControllMode":
-                                _switchToControlMode.Invoke();
+                                _switchToControlMode("1");
+                                _initSerialPort();
                                 break;
-                            case "InitSerialPort":
-                                _initSerialPort.Invoke();
+                            case "SwitchToSTM32ControllMode":
+                                _switchToControlMode("0");
                                 break;
                             default:
                                 Bitmap decodedByte = BitmapFactory.DecodeByteArray(data, 0, data.Length);

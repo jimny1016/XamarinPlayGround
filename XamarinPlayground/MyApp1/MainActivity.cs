@@ -82,7 +82,7 @@ namespace MyApp1
 
         private void SwitchToAndroidControllMode_Click(object sender, EventArgs e)
         {
-            ShowAlertDialog($"SwitchToControlMode:{SwitchToControlMode()}");
+            ShowAlertDialog($"SwitchToControlMode:{SwitchToControlMode("1")}");
         }
 
         private void InitSerialPort_Click(object sender, EventArgs e)
@@ -127,12 +127,12 @@ namespace MyApp1
             return false;
         }
 
-        public bool SwitchToControlMode() 
+        public bool SwitchToControlMode(string value) 
         {
             try
             {
                 BufferedWriter fops_2 = new BufferedWriter(new FileWriter("/sys/class/vd_gpio/cust_enjie/vd_enjie_ext_power"));//open node
-                fops_2.Write("1");
+                fops_2.Write(value);
                 fops_2.Close();
 
                 return true;
