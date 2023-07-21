@@ -11,6 +11,9 @@ using Newtonsoft.Json;
 using Java.IO;
 using Serial;
 using FileCatch;
+using System.Collections.Generic;
+using System;
+using static Android.Graphics.ImageDecoder;
 
 namespace MyApp1
 {
@@ -48,7 +51,7 @@ namespace MyApp1
             //toggleButton.Click += (sender, e) => {
             //    SwitchBackGroundColor();
             //};
-            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor);
+            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor, ddd, CreateColorRGBArray);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -156,8 +159,8 @@ namespace MyApp1
                    Stopbits.One,
                    Parity.None,
                    ByteSize.EightBits,
-                   Serial.FlowControl.Software,
-                   new Serial.Timeout(50, 50, 50, 50, 50));
+                   FlowControl.Software,
+                   new Timeout(50, 50, 50, 50, 50));
 
                 return true;
             }
@@ -182,6 +185,247 @@ namespace MyApp1
                 }
                 _isWhite = !_isWhite;
             });
-        }        
+        }
+        private const int SEND_BUFFER = 132;
+        private static readonly List<Tuple<int, int>> COMMAND_MAPPING = new List<Tuple<int, int>>()
+        {
+            Tuple.Create(0, 0),
+            Tuple.Create(1, 0),
+            Tuple.Create(2, 0),
+            Tuple.Create(3, 0),
+            Tuple.Create(4, 0),
+            Tuple.Create(5, 0),
+            Tuple.Create(6, 0),
+            Tuple.Create(7, 0),
+            Tuple.Create(8, 0),
+            Tuple.Create(8, 1),
+            Tuple.Create(7, 1),
+            Tuple.Create(6, 1),
+            Tuple.Create(5, 1),
+            Tuple.Create(4, 1),
+            Tuple.Create(3, 1),
+            Tuple.Create(2, 1),
+            Tuple.Create(1, 1),
+            Tuple.Create(0, 1),
+            Tuple.Create(3, 2),
+            Tuple.Create(4, 2),
+            Tuple.Create(5, 2),
+            Tuple.Create(6, 2),
+            Tuple.Create(7, 2),
+            Tuple.Create(8, 2),
+            Tuple.Create(8, 3),
+            Tuple.Create(7, 3),
+            Tuple.Create(6, 3),
+            Tuple.Create(5, 3),
+            Tuple.Create(4, 3),
+            Tuple.Create(3, 3),
+            Tuple.Create(2, 3),
+            Tuple.Create(1, 3),
+            Tuple.Create(0, 3),
+            Tuple.Create(0, 4),
+            Tuple.Create(1, 4),
+            Tuple.Create(2, 4),
+            Tuple.Create(3, 4),
+            Tuple.Create(4, 4),
+            Tuple.Create(5, 4),
+            Tuple.Create(6, 4),
+            Tuple.Create(7, 4),
+            Tuple.Create(8, 4),
+        };
+        public void ddd(ColorRGB[,] ColorArray)
+        {
+            //先根據 ColorArray 做出數據內容
+            List<byte> listCommand = new List<byte>
+            {
+                0xA5,
+                0xA7
+            };
+            for (int i = 0; i < COMMAND_MAPPING.Count; i++)
+            {
+                ColorRGB color = ColorArray[COMMAND_MAPPING[i].Item1, COMMAND_MAPPING[i].Item2];
+                listCommand.Add(color.G);
+                listCommand.Add(color.R);
+                listCommand.Add(color.B);
+            }
+
+            //算入數據長度 目前的 source.Count() + 4 沒有大於 0xFF 可以直接轉換
+            var commandCount = Convert.ToByte(listCommand.Count() + 4);
+
+            //使用數據內容算出教驗和
+            var commandCacul = CommandCaculddd(listCommand, commandCount);
+
+            //加入教驗和
+            listCommand.Add(commandCacul);
+
+            //插入數據長度
+            listCommand.Insert(0, commandCount);
+
+            //轉譯
+            var result = AdjustBytes(listCommand);
+
+            //插入禎頭
+            result.Insert(0, 0x7E);
+
+            //加入結尾
+            result.Add(0x7E);
+            _libSerialPort.Write(result.ToArray(), result.Count);
+        }
+        private byte CommandCaculddd(List<byte> source, byte commandCount)
+        {
+            byte result = 0x00;
+            foreach (byte singlebyte in source)
+            {
+                result += singlebyte;
+            }
+            result += commandCount;
+            return result;
+        }
+        private List<byte> AdjustBytes(List<byte> source)
+        {
+            List<byte> result = new List<byte>();
+
+            foreach (byte value in source)
+            {
+                if (value == 0x7E)
+                {
+                    result.Add(0x7D);
+                    result.Add(0x02);
+                    continue;
+                }
+
+                if (value == 0x7D)
+                {
+                    result.Add(0x7D);
+                    result.Add(0x01);
+                    continue;
+                }
+
+                result.Add(value);
+            }
+            return result;
+        }
+        public ColorRGB[,] CreateColorRGBArray(ColorRGB color)
+        {
+            ColorRGB[,] result = new ColorRGB[9, 5];
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    result[i, j] = color;
+                }
+            }
+
+            return result;
+        }
+        public void SendColor(ColorRGB[,] ColorArray)
+        {
+            byte[] sendcode = new byte[SEND_BUFFER];
+            List<byte> listCommand = new List<byte>();
+            sendcode[0] = 0x7E;
+            sendcode[1] = 0x84;
+            sendcode[2] = 0xA5;
+            sendcode[3] = 0xA7;
+            listCommand.Add(0x7E);
+            listCommand.Add(0x84);
+            listCommand.Add(0xA5);
+            listCommand.Add(0xA7);
+            for (int i = 0; i < COMMAND_MAPPING.Count; i++)
+            {
+                ColorRGB color = ColorArray[COMMAND_MAPPING[i].Item1, COMMAND_MAPPING[i].Item2];
+                sendcode[4 + i * 3] = color.G;
+                sendcode[5 + i * 3] = color.R;
+                sendcode[6 + i * 3] = color.B;
+                if (color.G != 0x7E && color.G != 0x7D)
+                {
+                    listCommand.Add(color.G);
+                }
+                else if (color.G == 0x7E)
+                {
+                    listCommand.Add(0x7D);
+                    listCommand.Add(0x02);
+                }
+                else if (color.G == 0x7D)
+                {
+                    listCommand.Add(0x7D);
+                    listCommand.Add(0x01);
+                }
+                if (color.R != 0x7E && color.R != 0x7D)
+                {
+                    listCommand.Add(color.R);
+                }
+                else if (color.R == 0x7E)
+                {
+                    listCommand.Add(0x7D);
+                    listCommand.Add(0x02);
+                }
+                else if (color.R == 0x7D)
+                {
+                    listCommand.Add(0x7D);
+                    listCommand.Add(0x01);
+                }
+                if (color.B != 0x7E && color.B != 0x7D)
+                {
+                    listCommand.Add(color.B);
+                }
+                else if (color.B == 0x7E)
+                {
+                    listCommand.Add(0x7D);
+                    listCommand.Add(0x02);
+                }
+                else if (color.B == 0x7D)
+                {
+                    listCommand.Add(0x7D);
+                    listCommand.Add(0x01);
+                }
+            }
+            byte checkSum = CommandCacul(sendcode[1..130]);
+            if (checkSum == 0x7D)
+            {
+                listCommand.Add(0x7D);
+                listCommand.Add(0x01);
+            }
+            else if (checkSum == 0x7E)
+            {
+                listCommand.Add(0x7E);
+                listCommand.Add(0x01);
+            }
+            else
+            {
+                listCommand.Add(checkSum);
+            }
+            listCommand.Add(0x7E);
+            _libSerialPort.Write(listCommand.ToArray(), listCommand.Count);
+        }
+        private byte CommandCacul(byte[] array)
+        {
+            byte result = 0x00;
+            foreach (byte singlebyte in array)
+            {
+                result += singlebyte;
+            }
+            if (result == 0x7E)
+            {
+
+            }
+            if (result == 0x7D)
+            {
+
+            }
+            return result;
+        }
+    }
+
+    public class ColorRGB
+    {
+        public byte R {get; set;}
+        public byte G { get; set; }
+        public byte B { get; set; }
+        public ColorRGB(byte R, byte G, byte B)
+        {
+            this.R = R;
+            this.G = G;
+            this.B = B;
+        }
     }
 }

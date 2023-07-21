@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.IO;
+using MyApp1;
 
 namespace FileCatch
 {
@@ -16,11 +17,15 @@ namespace FileCatch
         Func<string, bool> _switchToControlMode;
         Func<bool> _initSerialPort;
         Action _switchBackGround;
-        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort, Action switchBackGround)
+        Action<ColorRGB[,]> _lEDTest;
+        Func<ColorRGB, ColorRGB[,]> _createColorRGBArray;
+        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort, Action switchBackGround, Action<ColorRGB[,]> lEDTest, Func<ColorRGB, ColorRGB[,]> createColorRGBArray)
         {
             _switchToControlMode = switchToControlMode;
             _initSerialPort = initSerialPort;
             _switchBackGround = switchBackGround;
+            _lEDTest = lEDTest;
+            _createColorRGBArray = createColorRGBArray;
 
             new Thread(new ThreadStart(Socket)) { IsBackground = true }.Start();
         }
@@ -59,6 +64,9 @@ namespace FileCatch
                                 break;
                             case "SwitchBackGround":
                                 _switchBackGround?.Invoke();
+                                break;
+                            case "LEDTest":
+                                _lEDTest.Invoke(_createColorRGBArray(new ColorRGB(0xFF, 0x00, 0x00)));
                                 break;
                             default:
                                 Bitmap decodedByte = BitmapFactory.DecodeByteArray(data, 0, data.Length);
