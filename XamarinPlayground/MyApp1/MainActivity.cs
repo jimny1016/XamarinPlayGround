@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Android.App;
-using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Runtime;
@@ -11,39 +9,46 @@ using Java.Lang.Reflect;
 using Java.Lang;
 using Newtonsoft.Json;
 using Java.IO;
-using System.Reflection.Emit;
-using System.Threading;
 using Serial;
 using FileCatch;
 
 namespace MyApp1
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "", Theme = "@style/Theme.AppCompat.Light.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         private SerialPort.SerialPortWrapper.SerialPort _libSerialPort;
+        private bool _isWhite = true;
+        private RelativeLayout _layOut;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
+            RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.activity_main);
 
-            var switchToRndisBtn = FindViewById<Button>(Resource.Id.SwitchToRndis);
-            switchToRndisBtn.Click += SwitchToRndis_Click;
+            //var switchToRndisBtn = FindViewById<Button>(Resource.Id.SwitchToRndis);
+            //switchToRndisBtn.Click += SwitchToRndis_Click;
 
-            var switchToAndroidControllModeBtn = FindViewById<Button>(Resource.Id.SwitchToAndroidControllMode);
-            switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;
+            //var switchToAndroidControllModeBtn = FindViewById<Button>(Resource.Id.SwitchToAndroidControllMode);
+            //switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;
 
-            var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
-            initSerialPortBtn.Click += InitSerialPort_Click;
+            //var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
+            //initSerialPortBtn.Click += InitSerialPort_Click;
 
             var isToggleUSBTransferMode = ToggleUSBTransferMode();
             if (!isToggleUSBTransferMode)
             {
                 ShowAlertDialog($"切換網路共享模式失敗。");
             }
-            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort);
+
+            _layOut = FindViewById<RelativeLayout>(Resource.Id.fullScreenLayout);
+            //var toggleButton = FindViewById<Button>(Resource.Id.toggleButton);
+            //toggleButton.Click += (sender, e) => {
+            //    SwitchBackGroundColor();
+            //};
+            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -52,11 +57,7 @@ namespace MyApp1
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        void RunBitmapOnUIThread()
-        {
-            ShowAlertDialog($"RunBitmapOnUIThread!");
-        }
-
+        
         private void ShowAlertDialog(string message)
         {
             // 建立 AlertDialog.Builder
@@ -75,20 +76,20 @@ namespace MyApp1
             alertDialog.Show();
         }
 
-        private void SwitchToRndis_Click(object sender, EventArgs e)
-        {
-            ShowAlertDialog($"ToggleUSBTransferMode:{ToggleUSBTransferMode()}");
-        }
+        //private void SwitchToRndis_Click(object sender, EventArgs e)
+        //{
+        //    ShowAlertDialog($"ToggleUSBTransferMode:{ToggleUSBTransferMode()}");
+        //}
 
-        private void SwitchToAndroidControllMode_Click(object sender, EventArgs e)
-        {
-            ShowAlertDialog($"SwitchToControlMode:{SwitchToControlMode("1")}");
-        }
+        //private void SwitchToAndroidControllMode_Click(object sender, EventArgs e)
+        //{
+        //    ShowAlertDialog($"SwitchToControlMode:{SwitchToControlMode("1")}");
+        //}
 
-        private void InitSerialPort_Click(object sender, EventArgs e)
-        {
-            ShowAlertDialog($"InitSerialPort_Click:{InitSerialPort()}");
-        }
+        //private void InitSerialPort_Click(object sender, EventArgs e)
+        //{
+        //    ShowAlertDialog($"InitSerialPort_Click:{InitSerialPort()}");
+        //}
 
         public bool ToggleUSBTransferMode()
         {
@@ -168,6 +169,19 @@ namespace MyApp1
             return false;
         }
 
-        
+        public void SwitchBackGroundColor()
+        {
+            RunOnUiThread(() => {
+                if (_isWhite)
+                {
+                    _layOut.SetBackgroundColor(Android.Graphics.Color.Black);
+                }
+                else
+                {
+                    _layOut.SetBackgroundColor(Android.Graphics.Color.White);
+                }
+                _isWhite = !_isWhite;
+            });
+        }        
     }
 }

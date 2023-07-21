@@ -15,10 +15,12 @@ namespace FileCatch
         Socket _serverSocket;
         Func<string, bool> _switchToControlMode;
         Func<bool> _initSerialPort;
-        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort)
+        Action _switchBackGround;
+        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort, Action switchBackGround)
         {
             _switchToControlMode = switchToControlMode;
             _initSerialPort = initSerialPort;
+            _switchBackGround = switchBackGround;
 
             new Thread(new ThreadStart(Socket)) { IsBackground = true }.Start();
         }
@@ -54,6 +56,9 @@ namespace FileCatch
                                 break;
                             case "SwitchToSTM32ControllMode":
                                 _switchToControlMode("0");
+                                break;
+                            case "SwitchBackGround":
+                                _switchBackGround?.Invoke();
                                 break;
                             default:
                                 Bitmap decodedByte = BitmapFactory.DecodeByteArray(data, 0, data.Length);
