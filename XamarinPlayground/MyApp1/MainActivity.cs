@@ -14,6 +14,7 @@ using Java.IO;
 using System.Reflection.Emit;
 using System.Threading;
 using Serial;
+using FileCatch;
 
 namespace MyApp1
 {
@@ -36,6 +37,13 @@ namespace MyApp1
 
             var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
             initSerialPortBtn.Click += InitSerialPort_Click;
+
+            var isToggleUSBTransferMode = ToggleUSBTransferMode();
+            if (!isToggleUSBTransferMode)
+            {
+                ShowAlertDialog($"切換網路共享模式失敗。");
+            }
+            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -43,6 +51,10 @@ namespace MyApp1
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        void RunBitmapOnUIThread()
+        {
+            ShowAlertDialog($"RunBitmapOnUIThread!");
         }
 
         private void ShowAlertDialog(string message)
