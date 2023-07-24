@@ -67,6 +67,13 @@ namespace FileCatch
                                 break;
                             case "LEDTest":
                                 _lEDTest.Invoke(_createColorRGBArray(new ColorRGB(0xFF, 0x00, 0x00)));
+                                Thread.Sleep(3000);
+                                _lEDTest.Invoke(_createColorRGBArray(new ColorRGB(0x00, 0xFF, 0x00)));
+                                Thread.Sleep(3000);
+                                _lEDTest.Invoke(_createColorRGBArray(new ColorRGB(0x00, 0x00, 0xFF)));
+                                Thread.Sleep(3000);
+                                _lEDTest.Invoke(_createColorRGBArray(new ColorRGB(0xFF, 0xFF, 0xFF)));
+                                Thread.Sleep(3000);
                                 break;
                             default:
                                 Bitmap decodedByte = BitmapFactory.DecodeByteArray(data, 0, data.Length);
