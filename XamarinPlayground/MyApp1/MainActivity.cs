@@ -13,7 +13,6 @@ using Serial;
 using FileCatch;
 using System.Collections.Generic;
 using System;
-using static Android.Graphics.ImageDecoder;
 
 namespace MyApp1
 {
@@ -51,7 +50,7 @@ namespace MyApp1
             //toggleButton.Click += (sender, e) => {
             //    SwitchBackGroundColor();
             //};
-            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor, ddd, CreateColorRGBArray);
+            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor, SendLEDCommand, CreateColorRGBArray);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -186,7 +185,6 @@ namespace MyApp1
                 _isWhite = !_isWhite;
             });
         }
-        private const int SEND_BUFFER = 132;
         private static readonly List<Tuple<int, int>> COMMAND_MAPPING = new List<Tuple<int, int>>()
         {
             Tuple.Create(0, 0),
@@ -232,7 +230,7 @@ namespace MyApp1
             Tuple.Create(7, 4),
             Tuple.Create(8, 4),
         };
-        public void ddd(ColorRGB[,] ColorArray)
+        public void SendLEDCommand(ColorRGB[,] ColorArray)
         {
             //先根據 ColorArray 做出數據內容
             List<byte> listCommand = new List<byte>
@@ -318,102 +316,103 @@ namespace MyApp1
 
             return result;
         }
-        public void SendColor(ColorRGB[,] ColorArray)
-        {
-            byte[] sendcode = new byte[SEND_BUFFER];
-            List<byte> listCommand = new List<byte>();
-            sendcode[0] = 0x7E;
-            sendcode[1] = 0x84;
-            sendcode[2] = 0xA5;
-            sendcode[3] = 0xA7;
-            listCommand.Add(0x7E);
-            listCommand.Add(0x84);
-            listCommand.Add(0xA5);
-            listCommand.Add(0xA7);
-            for (int i = 0; i < COMMAND_MAPPING.Count; i++)
-            {
-                ColorRGB color = ColorArray[COMMAND_MAPPING[i].Item1, COMMAND_MAPPING[i].Item2];
-                sendcode[4 + i * 3] = color.G;
-                sendcode[5 + i * 3] = color.R;
-                sendcode[6 + i * 3] = color.B;
-                if (color.G != 0x7E && color.G != 0x7D)
-                {
-                    listCommand.Add(color.G);
-                }
-                else if (color.G == 0x7E)
-                {
-                    listCommand.Add(0x7D);
-                    listCommand.Add(0x02);
-                }
-                else if (color.G == 0x7D)
-                {
-                    listCommand.Add(0x7D);
-                    listCommand.Add(0x01);
-                }
-                if (color.R != 0x7E && color.R != 0x7D)
-                {
-                    listCommand.Add(color.R);
-                }
-                else if (color.R == 0x7E)
-                {
-                    listCommand.Add(0x7D);
-                    listCommand.Add(0x02);
-                }
-                else if (color.R == 0x7D)
-                {
-                    listCommand.Add(0x7D);
-                    listCommand.Add(0x01);
-                }
-                if (color.B != 0x7E && color.B != 0x7D)
-                {
-                    listCommand.Add(color.B);
-                }
-                else if (color.B == 0x7E)
-                {
-                    listCommand.Add(0x7D);
-                    listCommand.Add(0x02);
-                }
-                else if (color.B == 0x7D)
-                {
-                    listCommand.Add(0x7D);
-                    listCommand.Add(0x01);
-                }
-            }
-            byte checkSum = CommandCacul(sendcode[1..130]);
-            if (checkSum == 0x7D)
-            {
-                listCommand.Add(0x7D);
-                listCommand.Add(0x01);
-            }
-            else if (checkSum == 0x7E)
-            {
-                listCommand.Add(0x7E);
-                listCommand.Add(0x01);
-            }
-            else
-            {
-                listCommand.Add(checkSum);
-            }
-            listCommand.Add(0x7E);
-            _libSerialPort.Write(listCommand.ToArray(), listCommand.Count);
-        }
-        private byte CommandCacul(byte[] array)
-        {
-            byte result = 0x00;
-            foreach (byte singlebyte in array)
-            {
-                result += singlebyte;
-            }
-            if (result == 0x7E)
-            {
+        //private const int SEND_BUFFER = 132;
+        //public void SendColor(ColorRGB[,] ColorArray)
+        //{
+        //    byte[] sendcode = new byte[SEND_BUFFER];
+        //    List<byte> listCommand = new List<byte>();
+        //    sendcode[0] = 0x7E;
+        //    sendcode[1] = 0x84;
+        //    sendcode[2] = 0xA5;
+        //    sendcode[3] = 0xA7;
+        //    listCommand.Add(0x7E);
+        //    listCommand.Add(0x84);
+        //    listCommand.Add(0xA5);
+        //    listCommand.Add(0xA7);
+        //    for (int i = 0; i < COMMAND_MAPPING.Count; i++)
+        //    {
+        //        ColorRGB color = ColorArray[COMMAND_MAPPING[i].Item1, COMMAND_MAPPING[i].Item2];
+        //        sendcode[4 + i * 3] = color.G;
+        //        sendcode[5 + i * 3] = color.R;
+        //        sendcode[6 + i * 3] = color.B;
+        //        if (color.G != 0x7E && color.G != 0x7D)
+        //        {
+        //            listCommand.Add(color.G);
+        //        }
+        //        else if (color.G == 0x7E)
+        //        {
+        //            listCommand.Add(0x7D);
+        //            listCommand.Add(0x02);
+        //        }
+        //        else if (color.G == 0x7D)
+        //        {
+        //            listCommand.Add(0x7D);
+        //            listCommand.Add(0x01);
+        //        }
+        //        if (color.R != 0x7E && color.R != 0x7D)
+        //        {
+        //            listCommand.Add(color.R);
+        //        }
+        //        else if (color.R == 0x7E)
+        //        {
+        //            listCommand.Add(0x7D);
+        //            listCommand.Add(0x02);
+        //        }
+        //        else if (color.R == 0x7D)
+        //        {
+        //            listCommand.Add(0x7D);
+        //            listCommand.Add(0x01);
+        //        }
+        //        if (color.B != 0x7E && color.B != 0x7D)
+        //        {
+        //            listCommand.Add(color.B);
+        //        }
+        //        else if (color.B == 0x7E)
+        //        {
+        //            listCommand.Add(0x7D);
+        //            listCommand.Add(0x02);
+        //        }
+        //        else if (color.B == 0x7D)
+        //        {
+        //            listCommand.Add(0x7D);
+        //            listCommand.Add(0x01);
+        //        }
+        //    }
+        //    byte checkSum = CommandCacul(sendcode[1..130]);
+        //    if (checkSum == 0x7D)
+        //    {
+        //        listCommand.Add(0x7D);
+        //        listCommand.Add(0x01);
+        //    }
+        //    else if (checkSum == 0x7E)
+        //    {
+        //        listCommand.Add(0x7E);
+        //        listCommand.Add(0x01);
+        //    }
+        //    else
+        //    {
+        //        listCommand.Add(checkSum);
+        //    }
+        //    listCommand.Add(0x7E);
+        //    _libSerialPort.Write(listCommand.ToArray(), listCommand.Count);
+        //}
+        //private byte CommandCacul(byte[] array)
+        //{
+        //    byte result = 0x00;
+        //    foreach (byte singlebyte in array)
+        //    {
+        //        result += singlebyte;
+        //    }
+        //    if (result == 0x7E)
+        //    {
 
-            }
-            if (result == 0x7D)
-            {
+        //    }
+        //    if (result == 0x7D)
+        //    {
 
-            }
-            return result;
-        }
+        //    }
+        //    return result;
+        //}
     }
 
     public class ColorRGB
