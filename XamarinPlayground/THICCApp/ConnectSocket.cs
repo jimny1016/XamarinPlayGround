@@ -2,13 +2,11 @@ using System.Net.Sockets;
 using System.Net;
 using System;
 using Android.Graphics;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.IO;
-using MyApp1;
 
-namespace FileCatch
+namespace THICCApp
 {
     public class ConnectSocket
     {

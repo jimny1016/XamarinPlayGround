@@ -10,8 +10,8 @@
     <TemplateGuid>{122416d6-6b49-4ee2-a1e8-b825f31c79fe}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyApp1</RootNamespace>
-    <AssemblyName>MyApp1</AssemblyName>
+    <RootNamespace>THICCApp</RootNamespace>
+    <AssemblyName>THICCApp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <Deterministic>True</Deterministic>
     <AndroidApplication>True</AndroidApplication>
@@ -38,7 +38,7 @@
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>D:\Git\XamarinPlayGround\XamarinPlayground\MyApp1\platform.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyStore>D:\Git\XamarinPlayGround\XamarinPlayground\THICCApp\platform.keystore</AndroidSigningKeyStore>
     <AndroidSigningStorePass>android</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>androiddebugkey</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>android</AndroidSigningKeyPass>

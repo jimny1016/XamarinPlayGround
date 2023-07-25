@@ -10,11 +10,10 @@ using Java.Lang;
 using Newtonsoft.Json;
 using Java.IO;
 using Serial;
-using FileCatch;
 using System.Collections.Generic;
 using System;
 
-namespace MyApp1
+namespace THICCApp
 {
     [Activity(Label = "", Theme = "@style/Theme.AppCompat.Light.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
