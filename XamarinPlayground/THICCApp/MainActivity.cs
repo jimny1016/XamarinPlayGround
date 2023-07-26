@@ -12,44 +12,54 @@ using Java.IO;
 using Serial;
 using System.Collections.Generic;
 using System;
+using System.Reflection.Emit;
+using System.Threading;
 
 namespace THICCApp
 {
     [Activity(Label = "", Theme = "@style/Theme.AppCompat.Light.NoActionBar", MainLauncher = true)]
-    public class MainActivity : AppCompatActivity
+    public class MainActivity: AppCompatActivity
     {
         private SerialPort.SerialPortWrapper.SerialPort _libSerialPort;
         private bool _isWhite = true;
         private RelativeLayout _layOut;
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            // Set our view from the "main" layout resource
-            RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
-            SetContentView(Resource.Layout.activity_main);
-
-            //var switchToRndisBtn = FindViewById<Button>(Resource.Id.SwitchToRndis);
-            //switchToRndisBtn.Click += SwitchToRndis_Click;
-
-            //var switchToAndroidControllModeBtn = FindViewById<Button>(Resource.Id.SwitchToAndroidControllMode);
-            //switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;
-
-            //var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
-            //initSerialPortBtn.Click += InitSerialPort_Click;
-
-            var isToggleUSBTransferMode = ToggleUSBTransferMode();
-            if (!isToggleUSBTransferMode)
+            try
             {
-                ShowAlertDialog($"切換網路共享模式失敗。");
-            }
+                base.OnCreate(savedInstanceState);
+                Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+                // Set our view from the "main" layout resource
+                RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
+                SetContentView(Resource.Layout.activity_main);
 
-            _layOut = FindViewById<RelativeLayout>(Resource.Id.fullScreenLayout);
-            //var toggleButton = FindViewById<Button>(Resource.Id.toggleButton);
-            //toggleButton.Click += (sender, e) => {
-            //    SwitchBackGroundColor();
-            //};
-            var cnSock = new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor, SendLEDCommand, CreateColorRGBArray);
+                //var switchToRndisBtn = FindViewById<Button>(Resource.Id.SwitchToRndis);
+                //switchToRndisBtn.Click += SwitchToRndis_Click;
+
+                //var switchToAndroidControllModeBtn = FindViewById<Button>(Resource.Id.SwitchToAndroidControllMode);
+                //switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;
+
+                //var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
+                //initSerialPortBtn.Click += InitSerialPort_Click;
+
+                var isToggleUSBTransferMode = ToggleUSBTransferMode();
+                if (!isToggleUSBTransferMode)
+                {
+                    ShowAlertDialog($"切換網路共享模式失敗。");
+                }
+
+                _layOut = FindViewById<RelativeLayout>(Resource.Id.fullScreenLayout);
+                //var toggleButton = FindViewById<Button>(Resource.Id.toggleButton);
+                //toggleButton.Click += (sender, e) => {
+                //    SwitchBackGroundColor();
+                //};
+
+                new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor, SendLEDCommand, CreateColorRGBArray, this);                
+            }
+            catch (System.Exception e)
+            {
+                ShowAlertDialog(e.ToString());
+            }
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -58,7 +68,7 @@ namespace THICCApp
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        
+
         private void ShowAlertDialog(string message)
         {
             // 建立 AlertDialog.Builder
@@ -97,7 +107,7 @@ namespace THICCApp
             try
             {
                 // 取得 UsbManager 類別
-                var usbManagerClass = Class.ForName("android.hardware.usb.UsbManager"); 
+                var usbManagerClass = Class.ForName("android.hardware.usb.UsbManager");
                 var methods = usbManagerClass.GetMethods();
                 var setUsbFunctionMethod = methods.Where(m => m.Name == "setCurrentFunction").FirstOrDefault();
 
@@ -129,7 +139,7 @@ namespace THICCApp
             return false;
         }
 
-        public bool SwitchToControlMode(string value) 
+        public bool SwitchToControlMode(string value)
         {
             try
             {
@@ -138,7 +148,7 @@ namespace THICCApp
                 fops_2.Close();
 
                 return true;
-            } 
+            }
             catch (Java.Lang.Exception ex)
             {
                 ShowAlertDialog(JsonConvert.SerializeObject(ex));
@@ -157,8 +167,8 @@ namespace THICCApp
                    Stopbits.One,
                    Parity.None,
                    ByteSize.EightBits,
-                   FlowControl.Software,
-                   new Timeout(50, 50, 50, 50, 50));
+                   Serial.FlowControl.Software,
+                   new Serial.Timeout(50, 50, 50, 50, 50));
 
                 return true;
             }
@@ -416,7 +426,7 @@ namespace THICCApp
 
     public class ColorRGB
     {
-        public byte R {get; set;}
+        public byte R { get; set; }
         public byte G { get; set; }
         public byte B { get; set; }
         public ColorRGB(byte R, byte G, byte B)

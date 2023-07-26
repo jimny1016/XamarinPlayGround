@@ -5,6 +5,9 @@ using Android.Graphics;
 using System.Text;
 using System.Threading;
 using System.IO;
+using Android.App;
+using Android.OS;
+using System.Runtime.Remoting.Contexts;
 
 namespace THICCApp
 {
@@ -17,7 +20,7 @@ namespace THICCApp
         Action _switchBackGround;
         Action<ColorRGB[,]> _lEDTest;
         Func<ColorRGB, ColorRGB[,]> _createColorRGBArray;
-        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort, Action switchBackGround, Action<ColorRGB[,]> lEDTest, Func<ColorRGB, ColorRGB[,]> createColorRGBArray)
+        public ConnectSocket(Func<string, bool> switchToControlMode, Func<bool> initSerialPort, Action switchBackGround, Action<ColorRGB[,]> lEDTest, Func<ColorRGB, ColorRGB[,]> createColorRGBArray, Activity activity)
         {
             _switchToControlMode = switchToControlMode;
             _initSerialPort = initSerialPort;
@@ -25,7 +28,9 @@ namespace THICCApp
             _lEDTest = lEDTest;
             _createColorRGBArray = createColorRGBArray;
 
-            new Thread(new ThreadStart(Socket)) { IsBackground = true }.Start();
+            activity.RunOnUiThread(() => {
+                new Thread(new ThreadStart(Socket)) { IsBackground = true }.Start();
+            });
         }
 
         void Socket()
