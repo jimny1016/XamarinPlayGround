@@ -12,8 +12,6 @@ using Java.IO;
 using Serial;
 using System.Collections.Generic;
 using System;
-using System.Reflection.Emit;
-using System.Threading;
 
 namespace THICCApp
 {
@@ -33,15 +31,6 @@ namespace THICCApp
                 RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
                 SetContentView(Resource.Layout.activity_main);
 
-                //var switchToRndisBtn = FindViewById<Button>(Resource.Id.SwitchToRndis);
-                //switchToRndisBtn.Click += SwitchToRndis_Click;
-
-                //var switchToAndroidControllModeBtn = FindViewById<Button>(Resource.Id.SwitchToAndroidControllMode);
-                //switchToAndroidControllModeBtn.Click += SwitchToAndroidControllMode_Click;
-
-                //var initSerialPortBtn = FindViewById<Button>(Resource.Id.InitSerialPort);
-                //initSerialPortBtn.Click += InitSerialPort_Click;
-
                 var isToggleUSBTransferMode = ToggleUSBTransferMode();
                 if (!isToggleUSBTransferMode)
                 {
@@ -49,10 +38,6 @@ namespace THICCApp
                 }
 
                 _layOut = FindViewById<RelativeLayout>(Resource.Id.fullScreenLayout);
-                //var toggleButton = FindViewById<Button>(Resource.Id.toggleButton);
-                //toggleButton.Click += (sender, e) => {
-                //    SwitchBackGroundColor();
-                //};
 
                 new ConnectSocket(SwitchToControlMode, InitSerialPort, SwitchBackGroundColor, SendLEDCommand, CreateColorRGBArray, this);                
             }
@@ -86,21 +71,6 @@ namespace THICCApp
             // 顯示對話框
             alertDialog.Show();
         }
-
-        //private void SwitchToRndis_Click(object sender, EventArgs e)
-        //{
-        //    ShowAlertDialog($"ToggleUSBTransferMode:{ToggleUSBTransferMode()}");
-        //}
-
-        //private void SwitchToAndroidControllMode_Click(object sender, EventArgs e)
-        //{
-        //    ShowAlertDialog($"SwitchToControlMode:{SwitchToControlMode("1")}");
-        //}
-
-        //private void InitSerialPort_Click(object sender, EventArgs e)
-        //{
-        //    ShowAlertDialog($"InitSerialPort_Click:{InitSerialPort()}");
-        //}
 
         public bool ToggleUSBTransferMode()
         {
@@ -325,103 +295,6 @@ namespace THICCApp
 
             return result;
         }
-        //private const int SEND_BUFFER = 132;
-        //public void SendColor(ColorRGB[,] ColorArray)
-        //{
-        //    byte[] sendcode = new byte[SEND_BUFFER];
-        //    List<byte> listCommand = new List<byte>();
-        //    sendcode[0] = 0x7E;
-        //    sendcode[1] = 0x84;
-        //    sendcode[2] = 0xA5;
-        //    sendcode[3] = 0xA7;
-        //    listCommand.Add(0x7E);
-        //    listCommand.Add(0x84);
-        //    listCommand.Add(0xA5);
-        //    listCommand.Add(0xA7);
-        //    for (int i = 0; i < COMMAND_MAPPING.Count; i++)
-        //    {
-        //        ColorRGB color = ColorArray[COMMAND_MAPPING[i].Item1, COMMAND_MAPPING[i].Item2];
-        //        sendcode[4 + i * 3] = color.G;
-        //        sendcode[5 + i * 3] = color.R;
-        //        sendcode[6 + i * 3] = color.B;
-        //        if (color.G != 0x7E && color.G != 0x7D)
-        //        {
-        //            listCommand.Add(color.G);
-        //        }
-        //        else if (color.G == 0x7E)
-        //        {
-        //            listCommand.Add(0x7D);
-        //            listCommand.Add(0x02);
-        //        }
-        //        else if (color.G == 0x7D)
-        //        {
-        //            listCommand.Add(0x7D);
-        //            listCommand.Add(0x01);
-        //        }
-        //        if (color.R != 0x7E && color.R != 0x7D)
-        //        {
-        //            listCommand.Add(color.R);
-        //        }
-        //        else if (color.R == 0x7E)
-        //        {
-        //            listCommand.Add(0x7D);
-        //            listCommand.Add(0x02);
-        //        }
-        //        else if (color.R == 0x7D)
-        //        {
-        //            listCommand.Add(0x7D);
-        //            listCommand.Add(0x01);
-        //        }
-        //        if (color.B != 0x7E && color.B != 0x7D)
-        //        {
-        //            listCommand.Add(color.B);
-        //        }
-        //        else if (color.B == 0x7E)
-        //        {
-        //            listCommand.Add(0x7D);
-        //            listCommand.Add(0x02);
-        //        }
-        //        else if (color.B == 0x7D)
-        //        {
-        //            listCommand.Add(0x7D);
-        //            listCommand.Add(0x01);
-        //        }
-        //    }
-        //    byte checkSum = CommandCacul(sendcode[1..130]);
-        //    if (checkSum == 0x7D)
-        //    {
-        //        listCommand.Add(0x7D);
-        //        listCommand.Add(0x01);
-        //    }
-        //    else if (checkSum == 0x7E)
-        //    {
-        //        listCommand.Add(0x7E);
-        //        listCommand.Add(0x01);
-        //    }
-        //    else
-        //    {
-        //        listCommand.Add(checkSum);
-        //    }
-        //    listCommand.Add(0x7E);
-        //    _libSerialPort.Write(listCommand.ToArray(), listCommand.Count);
-        //}
-        //private byte CommandCacul(byte[] array)
-        //{
-        //    byte result = 0x00;
-        //    foreach (byte singlebyte in array)
-        //    {
-        //        result += singlebyte;
-        //    }
-        //    if (result == 0x7E)
-        //    {
-
-        //    }
-        //    if (result == 0x7D)
-        //    {
-
-        //    }
-        //    return result;
-        //}
     }
 
     public class ColorRGB

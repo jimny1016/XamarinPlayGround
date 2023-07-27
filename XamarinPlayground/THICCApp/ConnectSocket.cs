@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using Android.App;
-using Android.OS;
-using System.Runtime.Remoting.Contexts;
 
 namespace THICCApp
 {

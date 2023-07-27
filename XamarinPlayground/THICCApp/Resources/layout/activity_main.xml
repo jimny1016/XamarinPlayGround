@@ -5,28 +5,4 @@
     android:id="@+id/fullScreenLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--<Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="切換到網路共享"
-        android:layout_marginTop="0.0dp"
-        android:id="@+id/SwitchToRndis"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="切換到Android控制模式"
-        android:layout_marginTop="43.0dp"
-        android:id="@+id/SwitchToAndroidControllMode"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="初始化SerialPort"
-        android:layout_marginTop="90.0dp"
-        android:id="@+id/InitSerialPort"/>
-    <Button
-        android:id="@+id/toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="切換背景顏色" />-->
 </RelativeLayout>
